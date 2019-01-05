@@ -9,10 +9,12 @@ class accountAccountMigrationFieldSat(models.Model):
 
 
 
-class accountAccountTagMigrationFieldSat(models.Model):
+class accountAccountTagMigrationFields(models.Model):
     _inherit = 'account.account.tag'
 
     sat_code_aux = fields.Char('Aux Sat Code', compute='_get_sat_only_code', store=True)
+    only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
 
     @api.multi
     @api.depends('name')
@@ -28,18 +30,27 @@ class accountAccountTagMigrationFieldSat(models.Model):
 
 
 
-class accountInvoiceSat(models.Model):
+class accountInvoiceMigrationFields(models.Model):
     _inherit = 'account.invoice'
 
     uuid_aux = fields.Char('Old UUID')
     sat_signed_date_aux = fields.Char('Signed Date')
     only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
 
 
-class accountPaymentSat(models.Model):
+class accountInvoiceLineMigrationFields(models.Model):
+    _inherit = 'account.invoice.line'
+
+    only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
+
+
+class accountPaymentMigrationFields(models.Model):
     _inherit = 'account.payment'
 
     uuid_aux = fields.Char('Old UUID')
     sat_signed_date_aux = fields.Char('Signed Date')
     only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
 

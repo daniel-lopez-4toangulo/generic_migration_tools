@@ -35,7 +35,9 @@
                         </group>
                         <group>
                             <field name='file' required='1' filename="file_name"/>
-                            <field name='obj_identification_column' required='1'/>
+                            <field name='import_type' required='1'/>
+                            <field name='obj_identification_column'
+                                   attrs="{'invisible': [('import_type', '=', 'create')], 'required': [('import_type', '=', 'update')]}"/>
                         </group>
                     </group>
                     <notebook>

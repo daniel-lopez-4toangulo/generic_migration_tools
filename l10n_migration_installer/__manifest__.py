@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 {
-    'name' : 'Migration Aux Fields',
+    'name' : 'Migration Installer',
     'version' : '1.0',
-    'summary': 'For storing important fields for the Localization Migration process',
+    'summary': 'Installer module for l10n migration',
     'description': """
     """,
-    'category': 'Tools',
+    'category': 'Localization',
     'website': 'https://www.odoo.com',
     'images' : [],
-    'depends' : ['base_setup'],
+    'depends' : ['base_setup', 'aux_copy_fields', 'account_migration'],
     'data': [
-        'views/nviews.xml'
     ],
     'demo': [
 

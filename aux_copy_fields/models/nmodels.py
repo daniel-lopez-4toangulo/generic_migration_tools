@@ -47,6 +47,9 @@ class ImportGenericData(models.Model):
     generic_data_line_ids = fields.One2many('import.generic.data.line', 'generic_data_id', string='Data Lines')
     obj_identification_field = fields.Many2one('ir.model.fields', string='Identification Field')
     obj_identification_column = fields.Integer('Object Id on Column',default=1)
+    import_type = fields.Selection([
+        ('create', 'Create'),
+        ('update', 'Update')], string='Import Type', default='update')
     imported = fields.Boolean()
 
     @api.multi
@@ -124,23 +127,26 @@ class ImportGenericData(models.Model):
                 if rel_obj:
                     row_col_value = rel_obj[0].id
             if row_col_value == 'False' or row_col_value == 'FALSE' or row_col_value == 'Falso' or row_col_value == 'FALSO' \
-                or row_col_value == 'No' or row_col_value == 'no' or row_col_value == 'NO' or row_col_value == '0':
+                or row_col_value == 'No' or row_col_value == 'no' or row_col_value == 'NO':
                 row_col_value = False
             elif row_col_value == 'True' or row_col_value == 'TRUE' or row_col_value == 'Verdadero' or row_col_value == 'VERDADERO' \
-                or row_col_value == 'Si' or row_col_value == 'si' or row_col_value == 'SI' or row_col_value == '1':
+                or row_col_value == 'Si' or row_col_value == 'si' or row_col_value == 'SI':
                 row_col_value = True
             dict_vals.update({line.ir_model_fields_id.name: row_col_value})
         try:
-            row_id_value = row[self.obj_identification_column]
-            if type != 'csv':
-                row_id_value = row[self.obj_identification_column].value
-            row_id_value = row_id_value.strip()
-            if row_id_value:
-                search_objs = self.env[self.ir_model_id.model].search([(self.obj_identification_field.name,'=',row_id_value)])
-                if search_objs:
-                    search_objs.write(dict_vals)
-            else:
+            if self.import_type == 'create':
                 self.env[self.ir_model_id.model].create(dict_vals)
+            else:
+                row_id_value = row[self.obj_identification_column]
+                if type != 'csv':
+                    row_id_value = row[self.obj_identification_column].value
+                row_id_value = row_id_value.strip()
+                if row_id_value:
+                    search_objs = self.env[self.ir_model_id.model].search([(self.obj_identification_field.name,'=',row_id_value)])
+                    if search_objs:
+                        search_objs.write(dict_vals)
+                else:
+                    self.env[self.ir_model_id.model].create(dict_vals)
         except Exception as e:
             error = e
             raise UserError(_('An error has been detected'))
