@@ -31,7 +31,8 @@
                     <group>
                         <group>
                             <field name='ir_model_id' required='1'/>
-                            <field name='obj_identification_field' domain="[('model_id','=',ir_model_id)]" required='1'/>
+                            <field name='obj_identification_field' domain="[('model_id','=',ir_model_id)]"
+                            attrs="{'invisible': [('import_type', '=', 'create')], 'required': [('import_type', '=', 'update')]}"/>
                         </group>
                         <group>
                             <field name='file' required='1' filename="file_name"/>
