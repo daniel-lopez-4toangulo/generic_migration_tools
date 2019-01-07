@@ -8,7 +8,7 @@
     'category': 'Tools',
     'website': 'https://www.odoo.com',
     'images' : [],
-    'depends' : ['base_setup'],
+    'depends' : ['base','mail'],
     'data': [
         'views/nviews.xml'
     ],

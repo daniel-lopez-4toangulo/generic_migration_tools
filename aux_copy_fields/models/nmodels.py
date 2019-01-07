@@ -54,7 +54,7 @@ EXTENSIONS = {
 
 class ImportGenericData(models.Model):
     _name = 'import.generic.data'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.alias.mixin', 'mail.thread', 'ir.needaction_mixin']
     _description = "Import Data Document"
 
     file = fields.Binary('File', help="File")

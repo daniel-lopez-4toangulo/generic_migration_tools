@@ -8,7 +8,7 @@
     'category': 'Localization',
     'website': 'https://www.odoo.com',
     'images' : [],
-    'depends' : ['base_setup', 'account'],
+    'depends' : ['base', 'account'],
     'data': [
         'views/iviews.xml'
     ],
