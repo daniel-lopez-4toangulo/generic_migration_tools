@@ -1,4 +1,5 @@
 
+import csv
 import datetime
 import io
 import itertools
@@ -7,31 +8,48 @@ import psycopg2
 import operator
 import os
 import re
-
 import base64
-from odoo.exceptions import UserError
+
 from odoo import api, fields, models
 from odoo.tools.translate import _
 from odoo.tools.mimetypes import guess_mimetype
 from odoo.tools.misc import ustr
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.exceptions import UserError
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 
 FIELDS_RECURSION_LIMIT = 2
 ERROR_PREVIEW_BYTES = 200
 _logger = logging.getLogger(__name__)
 
-import xlrd
-from xlrd import xlsx
+try:
+    import xlrd
+    try:
+        from xlrd import xlsx
+    except ImportError:
+        xlsx = None
+except ImportError:
+    xlrd = xlsx = None
+
+try:
+    import odf_ods_reader
+except ImportError:
+    odf_ods_reader = None
 
 FILE_TYPE_DICT = {
     'text/csv': ('csv', True, None),
     'application/vnd.ms-excel': ('xls', xlrd, 'xlrd'),
-    'application/octet-stream': ('xlsx', xlsx, 'xlrd >= 1.0.0'),
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ('xlsx', xlsx, 'xlrd >= 1.0.0')
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ('xlsx', xlsx, 'xlrd >= 0.8'),
+    'application/vnd.oasis.opendocument.spreadsheet': ('ods', odf_ods_reader, 'odfpy')
 }
 EXTENSIONS = {
     '.' + ext: handler
-    for mime, (ext, handler, req) in FILE_TYPE_DICT.items()
+    for mime, (ext, handler, req) in FILE_TYPE_DICT.iteritems()
 }
 
 class ImportGenericData(models.Model):
@@ -58,17 +76,13 @@ class ImportGenericData(models.Model):
             :param options : dict of reading options (quoting, separator, ...)
         """
         self.ensure_one()
-        # guess mimetype from file content
-        mimetype = guess_mimetype(self.file)
-
         excep_flag = False
         excep_obj = False
-        # mimetype = self.file_type
+        # guess mimetype from file content
+        mimetype = guess_mimetype(self.file)
         (file_extension, handler, req) = FILE_TYPE_DICT.get(mimetype, (None, None, None))
         if handler:
             try:
-                excep_obj = False
-                excep_flag = False
                 return getattr(self, '_read_' + file_extension)()
             except Exception as e:
                 _logger.warn("Failed to read file '%s' (transient id %d) using guessed mimetype %s",
@@ -80,8 +94,6 @@ class ImportGenericData(models.Model):
         (file_extension, handler, req) = FILE_TYPE_DICT.get(self.file_type, (None, None, None))
         if handler:
             try:
-                excep_obj = False
-                excep_flag = False
                 return getattr(self, '_read_' + file_extension)()
             except Exception as e:
                 _logger.warn("Failed to read file '%s' (transient id %d) using user-provided mimetype %s",
@@ -96,8 +108,6 @@ class ImportGenericData(models.Model):
             p, ext = os.path.splitext(self.file_name)
             if ext in EXTENSIONS:
                 try:
-                    excep_obj = False
-                    excep_flag = False
                     return getattr(self, '_read_' + ext[1:])()
                 except Exception as e:
                     _logger.warn("Failed to read file '%s' (transient id %s) using file extension", self.file_name,
@@ -155,7 +165,7 @@ class ImportGenericData(models.Model):
     def _read_xls_book(self, book):
         sheet = book.sheet_by_index(0)
         row_counter = 0
-        for row in pycompat.imap(sheet.row, range(sheet.nrows)):
+        for row in itertools.imap(sheet.row, range(sheet.nrows)):
             if row_counter == 0:
                 pass
             else:
@@ -181,8 +191,8 @@ class ImportGenericData(models.Model):
             # csv module expect utf-8, see http://docs.python.org/2/library/csv.html
             csv_data = csv_data.decode(encoding).encode('utf-8')
 
-        csv_iterator = pycompat.csv_reader(
-            io.BytesIO(csv_data),
+        csv_iterator = csv.reader(
+            StringIO(csv_data),
             quotechar=str('"'),
             delimiter=str(','))
 
