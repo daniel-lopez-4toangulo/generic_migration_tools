@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_only_query" model="ir.ui.view">
+        <field name="name">view.picking.form.only.query</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <data>
+
+                <xpath expr="//header" position="inside">
+                    <field name="only_query" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//header" position="attributes">
+                    <attribute name="attrs">{'invisible': [('only_query', '=', True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='move_line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('only_query', '=', True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='move_lines']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('only_query', '=', True)]}</attribute>
+                </xpath>
+            </data>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_only_query" model="ir.ui.view">
+        <field name="name">view.order.form.only.query</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <data>
+
+                <xpath expr="//header" position="inside">
+                    <field name="only_query" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//header" position="attributes">
+                    <attribute name="attrs">{'invisible': [('only_query', '=', True),('state','!=','draft')]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('only_query', '=', True)]}</attribute>
+                </xpath>
+
+            </data>
+        </field>
+    </record>
+
+</odoo>

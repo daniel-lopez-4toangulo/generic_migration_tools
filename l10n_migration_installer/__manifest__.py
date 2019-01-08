@@ -8,7 +8,8 @@
     'category': 'Localization',
     'website': 'https://www.odoo.com',
     'images' : [],
-    'depends' : ['base_setup', 'aux_copy_fields', 'account_migration'],
+    'depends' : ['base_setup', 'base', 'aux_copy_fields', 'account_migration', 'sale_migration','purchase_migration',
+                 'base_models_migration', 'product_migration', 'stock_migration', 'mrp_migration'],
     'data': [
     ],
     'demo': [

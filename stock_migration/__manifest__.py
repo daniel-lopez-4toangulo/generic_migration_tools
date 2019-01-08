@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 {
-    'name' : 'Migration Aux Fields',
+    'name' : 'Stock Migration',
     'version' : '1.0',
-    'summary': 'For storing important fields for the Localization Migration process',
+    'summary': 'Adding fields and/or inheriting for Localization Migration Process',
     'description': """
     """,
-    'category': 'Tools',
+    'category': 'Localization',
     'website': 'https://www.odoo.com',
     'images' : [],
-    'depends' : ['base_setup','mail'],
+    'depends' : ['base_setup', 'stock'],
     'data': [
-        'views/nviews.xml'
+        'views/iviews.xml'
     ],
     'demo': [
 
