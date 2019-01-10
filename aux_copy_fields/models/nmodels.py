@@ -117,6 +117,7 @@ class ImportGenericData(models.Model):
 
     def update_create_obj(self, row, type='csv'):
         dict_vals = dict()
+        jump_flag = False
         for line in self.generic_data_line_ids:
             row_col_value = row[line.column_number]
             if type != 'csv':
@@ -126,6 +127,12 @@ class ImportGenericData(models.Model):
                 rel_obj = self.env[line.ir_model_fields_id.relation].search([(line.technical_search_value_field,'=',row_col_value)])
                 if rel_obj:
                     row_col_value = rel_obj[0].id
+                else:
+                    if line.ir_model_fields_id.required:
+                        jump_flag = True
+                        break
+                    else:
+                        row_col_value = None
             if row_col_value == 'False' or row_col_value == 'FALSE' or row_col_value == 'Falso' or row_col_value == 'FALSO' \
                 or row_col_value == 'No' or row_col_value == 'no' or row_col_value == 'NO':
                 row_col_value = False
@@ -133,23 +140,23 @@ class ImportGenericData(models.Model):
                 or row_col_value == 'Si' or row_col_value == 'si' or row_col_value == 'SI':
                 row_col_value = True
             dict_vals.update({line.ir_model_fields_id.name: row_col_value})
-        try:
-            if self.import_type == 'create':
-                self.env[self.ir_model_id.model].create(dict_vals)
-            else:
-                row_id_value = row[self.obj_identification_column]
-                if type != 'csv':
-                    row_id_value = row[self.obj_identification_column].value
-                row_id_value = row_id_value.strip()
-                if row_id_value:
-                    search_objs = self.env[self.ir_model_id.model].search([(self.obj_identification_field.name,'=',row_id_value)])
-                    if search_objs:
-                        search_objs.write(dict_vals)
-                else:
+        if not jump_flag:
+            try:
+                if self.import_type == 'create':
                     self.env[self.ir_model_id.model].create(dict_vals)
-        except Exception as e:
-            error = e
-            raise UserError(_('An error has been detected'))
+                else:
+                    row_id_value = row[self.obj_identification_column]
+                    if type != 'csv':
+                        row_id_value = row[self.obj_identification_column].value
+                    row_id_value = row_id_value.strip()
+                    if row_id_value:
+                        search_objs = self.env[self.ir_model_id.model].search([(self.obj_identification_field.name,'=',row_id_value)])
+                        if search_objs:
+                            search_objs.write(dict_vals)
+                    else:
+                        self.env[self.ir_model_id.model].create(dict_vals)
+            except Exception as e:
+                raise UserError(_('An error has been detected. %s') % e)
 
 
     def _read_xls_book(self, book):

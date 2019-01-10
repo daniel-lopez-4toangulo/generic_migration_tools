@@ -24,4 +24,25 @@ class productCategoryMigrationFields(models.Model):
     old_db_id = fields.Integer()
 
 
+class productAttributeMigrationFields(models.Model):
+    _inherit = 'product.attribute'
+
+    only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
+
+
+class productAttributeValueMigrationFields(models.Model):
+    _inherit = 'product.attribute.value'
+
+    only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
+
+
+class productAttributeLineMigrationFields(models.Model):
+    _inherit = 'product.attribute.line'
+
+    only_query = fields.Boolean(default=False)
+    old_db_id = fields.Integer()
+
+
 

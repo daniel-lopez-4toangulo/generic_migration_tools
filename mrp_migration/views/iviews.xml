@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="mrp_production_form_view_only_query" model="ir.ui.view">
+        <field name="name">mrp.production.form.view.only.query</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <data>
 
+                <xpath expr="//header" position="inside">
+                    <field name="only_query" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//header" position="attributes">
+                    <attribute name="attrs">{'invisible': [('only_query', '=', True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='move_raw_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('only_query', '=', True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='finished_move_line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('only_query', '=', True)]}</attribute>
+                </xpath>
+            </data>
+        </field>
+    </record>
 
 </odoo>

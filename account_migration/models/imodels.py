@@ -6,6 +6,7 @@ class accountAccountMigrationFieldSat(models.Model):
     _inherit = 'account.account'
 
     sat_code_aux = fields.Char('Aux Sat Code')
+    old_db_id = fields.Integer()
 
 
 
