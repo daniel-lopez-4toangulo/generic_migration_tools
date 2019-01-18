@@ -8,7 +8,7 @@
     'category': 'Localization',
     'website': 'https://www.odoo.com',
     'images' : [],
-    'depends' : ['base_setup', 'mrp'],
+    'depends' : ['base_setup', 'mrp', 'mrp_byproduct'],
     'data': [
         'views/iviews.xml'
     ],
