@@ -16,9 +16,9 @@
                     <attribute name="attrs">{'invisible': [('only_query', '=', True),('state','!=','draft')]}</attribute>
                 </xpath>
 
-                <xpath expr="//field[@name='order_line']" position="attributes">
+                <!--<xpath expr="//field[@name='order_line']" position="attributes">
                     <attribute name="attrs">{'readonly': [('only_query', '=', True)]}</attribute>
-                </xpath>
+                </xpath>-->
 
             </data>
         </field>
