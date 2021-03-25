@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.currency.rate.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <data> 
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="not_company_currency" invisible="1"/>
+                    <field name="use_custom_rate" groups="base.group_multi_currency" attrs="{'invisible':[('not_company_currency','=',False)]}"/>
+                    <field name="currency_rate" groups="base.group_multi_currency" attrs="{'invisible':['|',('not_company_currency','=',False), ('use_custom_rate','=',False)]}"/>
+                    <field name="custom_rate" groups="base.group_multi_currency" attrs="{'invisible':['|',('not_company_currency','=',False), ('use_custom_rate','=',False)], 'readonly':['|', ('use_custom_rate','=',False), ('state','!=', 'draft')]}"/>
+                </xpath>
+                <field name="amount_total" position="after">
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="amount_total_company_currency" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('not_company_currency','=',False)]}"/>
+                </field>
+            </data>
+        </field>
+    </record>
+
+</odoo>
